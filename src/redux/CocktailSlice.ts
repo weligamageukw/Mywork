@@ -16,19 +16,6 @@ type StateProps = {
   isLoading: boolean,
 };
 
-// export const getCocktails = createAsyncThunk(
-//   'cocktails/getCocktails',
-//   async args => {
-//     const response = await fetch(
-//       'https://www.thecocktaildb.com/api/json/v1/1/search.php?f=a',
-//     );
-//     const formatedResponse = await response.json();
-//     console.log(formatedResponse);
-//     console.log(args);
-//     // return formatedResponse;
-//   },
-// );
-
 export const CocktailSlice = createSlice({
   name: 'favouriteCocktails',
   initialState: {
@@ -40,7 +27,6 @@ export const CocktailSlice = createSlice({
       state.list.push(action.payload);
     },
     removeCocktails: (state: StateProps, action: ActionRemove) => {
-      // console.log(action.payload);
       let index = state.list.findIndex(
         (obj: cocktailProps) => obj.idDrink == action.payload,
       );

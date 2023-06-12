@@ -39,37 +39,39 @@ const ListItemActions = ({
 
   return (
     <View style={styles.rowActionsContentRight}>
-      <View style={styles.elemAction}>
-        <TouchableOpacity
-          onPress={e => {
-            e.stopPropagation();
-            Alert.alert('View Comments');
-          }}
-          style={styles.iconStyle}>
-          <FontAwesome
-            style={styles.actionButton}
-            name="comment-o"
-            size={15}
-            color={Colors.primary}
-          />
-        </TouchableOpacity>
-        <Text style={styles.actionText}>{comments}</Text>
-      </View>
-      <View style={styles.elemAction}>
-        <TouchableOpacity
-          onPress={e => {
-            e.stopPropagation();
-            FavouriteHandler();
-          }}
-          style={styles.iconStyle}>
-          <FontAwesome
-            style={styles.actionButton}
-            name={isFavourite ? 'heart' : 'heart-o'}
-            size={15}
-            color={isFavourite ? Colors.button : Colors.primary}
-          />
-        </TouchableOpacity>
-        <Text style={styles.actionText}>{likes}</Text>
+      <View style={styles.row}>
+        <View style={styles.elemAction}>
+          <TouchableOpacity
+            onPress={e => {
+              e.stopPropagation();
+              Alert.alert('View Comments');
+            }}
+            style={styles.iconStyle}>
+            <FontAwesome
+              style={styles.actionButton}
+              name="comment-o"
+              size={15}
+              color={Colors.primary}
+            />
+          </TouchableOpacity>
+          <Text style={styles.actionText}>{comments}</Text>
+        </View>
+        <View style={styles.elemAction}>
+          <TouchableOpacity
+            onPress={e => {
+              e.stopPropagation();
+              FavouriteHandler();
+            }}
+            style={styles.iconStyle}>
+            <FontAwesome
+              style={styles.actionButton}
+              name={isFavourite ? 'heart' : 'heart-o'}
+              size={15}
+              color={isFavourite ? Colors.button : Colors.primary}
+            />
+          </TouchableOpacity>
+          <Text style={styles.actionText}>{likes}</Text>
+        </View>
       </View>
     </View>
   );
@@ -78,17 +80,18 @@ const ListItemActions = ({
 export default ListItemActions;
 
 const styles = StyleSheet.create({
-  actionButton: {
-    width: 15,
-    height: 18,
-    marginRight: 6,
-  },
   rowActionsContentRight: {
     flexGrow: 1,
     justifyContent: 'flex-end',
     flexDirection: 'row',
     marginTop: 8,
     marginRight: 16,
+  },
+  row: {flexDirection: 'row'},
+  actionButton: {
+    width: 15,
+    height: 18,
+    marginRight: 6,
   },
   iconStyle: {padding: 5},
   elemAction: {

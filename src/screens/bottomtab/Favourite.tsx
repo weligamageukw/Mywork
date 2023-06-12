@@ -25,6 +25,7 @@ const Favourite = (): JSX.Element => {
     <SafeAreaView style={styles.container}>
       {cocktails.length > 0 ? (
         <FlatList
+          testID="favouritelList"
           data={cocktails}
           keyExtractor={item => {
             return item.idDrink;

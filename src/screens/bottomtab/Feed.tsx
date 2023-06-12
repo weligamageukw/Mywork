@@ -137,6 +137,7 @@ const Feed = () => {
       })}
       {cocktails.length > 0 && !isLoading ? (
         <FlatList
+          testID="mainCocktailList"
           data={cocktails}
           keyExtractor={item => {
             return item.idDrink;

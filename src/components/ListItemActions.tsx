@@ -4,6 +4,7 @@ import {useDispatch} from 'react-redux';
 //@ts-ignore
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {selectCocktails, removeCocktails} from '../redux/CocktailSlice';
+import {signIn} from '../redux/SignInSlice';
 import {Colors} from '../styles/colors';
 import {cocktailProps} from '../types/types';
 
@@ -31,6 +32,7 @@ const ListItemActions = ({
         isFavourite: true,
       };
       dispatch(selectCocktails(tempElement));
+      // dispatch(signIn('signIn'));
     } else {
       dispatch(removeCocktails(cocktail.idDrink));
     }

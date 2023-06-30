@@ -1,5 +1,5 @@
 import 'react-native-gesture-handler';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import Navigation from './src/navigation/MainNavigation';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {Provider} from 'react-redux';

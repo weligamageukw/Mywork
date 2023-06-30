@@ -30,3 +30,27 @@ describe('render listItemActions', () => {
     expect(tree.children.length).toBe(1);
   });
 });
+
+// import React from 'react';
+// import {render, fireEvent} from '@testing-library/react-native';
+// import {UserActions} from '../src/screens/bottomtab/Feed';
+
+// describe('UserActions', () => {
+//   it('should update search query correctly', () => {
+//     const setSearchResults = jest.fn();
+//     const refreshList = jest.fn();
+
+//     const {getByPlaceholderText} = render(
+//       <UserActions
+//         setSearchResults={setSearchResults}
+//         refreshList={refreshList}
+//       />,
+//     );
+
+//     const searchInput = getByPlaceholderText('Search');
+
+//     fireEvent.changeText(searchInput, 'apple');
+
+//     expect(searchInput.props.value).toBe('apple');
+//   });
+// });

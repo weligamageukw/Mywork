@@ -1,8 +1,8 @@
 import {configureStore} from '@reduxjs/toolkit';
-import CocktailReducer from './CocktailSlice';
+import SignInReducer from './SignInSlice';
 
 export default configureStore({
   reducer: {
-    cocktails: CocktailReducer,
+    SignIn: SignInReducer,
   },
 });

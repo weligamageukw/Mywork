@@ -1,45 +1,113 @@
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import {
   View,
   Text,
   TextInput,
-  Button,
+  ActivityIndicator,
   StyleSheet,
   Image,
   TouchableOpacity,
   ScrollView,
+  Alert,
 } from 'react-native';
 import {Colors} from '../../styles/colors';
-
 import axios from 'axios';
 
-import {useDispatch, useSelector} from 'react-redux';
-import {signIn} from '../../redux/SignInSlice';
+import {AuthContext} from '../../navigation/AuthContext';
+import EncryptedStorage from 'react-native-encrypted-storage';
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const [usernameError, setUsernameError] = useState<string>('');
+  const [passwordError, setPasswordError] = useState<string>('');
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [usernameCredentialsError, setUsernameCredentialsError] =
+    useState<boolean>(true);
+  const [passwordCredentialsError, setPasswordCredentialsError] =
+    useState<boolean>(true);
+  const [loading, setLoading] = useState(false);
 
-  const dispatch = useDispatch();
+  const {signIn} = useContext(AuthContext);
+
+  const validateUsername = (text: string) => {
+    if (text.trim() === '') {
+      setUsernameError('Username is required');
+      setUsernameCredentialsError(true);
+    } else if (!isValidEmail(text)) {
+      setUsernameError('Invalid email address');
+      setUsernameCredentialsError(true);
+    } else {
+      setUsernameError('');
+      setUsernameCredentialsError(false);
+    }
+  };
+
+  const validatePassword = (text: string) => {
+    const trimmedPassword = text.trim();
+    if (trimmedPassword === '') {
+      setPasswordError('Password is required');
+      setPasswordCredentialsError(true);
+    } else if (trimmedPassword.length < 6) {
+      setPasswordError('Password should have at least 6 characters');
+      setPasswordCredentialsError(true);
+    } else {
+      setPasswordError('');
+      setPasswordCredentialsError(false);
+    }
+  };
+
+  const isValidEmail = (email: string) => {
+    // Simple email validation regex
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
 
   const handleUsernameChange = (text: string) => {
     setUsername(text);
+    validateUsername(text);
   };
 
   const handlePasswordChange = (text: string) => {
     setPassword(text);
-  };
-
-  const handleUsernameButtonPress = () => {
-    console.log('Username Button Pressed');
-  };
-
-  const handlePasswordButtonPress = () => {
-    console.log('Password Button Pressed');
+    validatePassword(text);
   };
 
   const handleForgotPasswordPress = () => {
     console.log('Forgot Password Pressed');
+  };
+
+  async function storeUserSession() {
+    try {
+      await EncryptedStorage.setItem(
+        'user_session',
+        JSON.stringify({
+          token: 'ACCESS_TOKEN',
+          username: 'emeraldsanto',
+        }),
+      );
+    } catch (error) {
+      console.log('Error storeUserSession');
+    }
+  }
+
+  const handleLoginPress = () => {
+    if (usernameCredentialsError) {
+      Alert.alert('Please enter valid Username');
+    } else if (passwordCredentialsError) {
+      Alert.alert('Please enter valid Password');
+    } else {
+      setLoading(true);
+      storeUserSession();
+      setTimeout(() => {
+        setLoading(false);
+        signIn();
+      }, 3000);
+    }
+  };
+
+  const toggleShowPassword = () => {
+    setShowPassword(!showPassword);
   };
 
   async function userLogin(username: string, password: string) {
@@ -88,12 +156,6 @@ const Login: React.FC = () => {
     }
   };
 
-  const handleLoginPress = () => {
-    console.log('Login Pressed');
-    // sendPostRequest();
-    dispatch(signIn(true));
-  };
-
   return (
     <ScrollView style={{flex: 1, backgroundColor: Colors.background}}>
       <View style={styles.container}>
@@ -110,8 +172,11 @@ const Login: React.FC = () => {
             value={username}
             onChangeText={handleUsernameChange}
           />
+          {usernameError ? (
+            <Text style={styles.errorText}>{usernameError}</Text>
+          ) : null}
         </View>
-        <View style={styles.inputContainer}>
+        {/* <View style={styles.inputContainer}>
           <Text style={styles.label}>Password</Text>
           <TextInput
             style={styles.input}
@@ -119,17 +184,43 @@ const Login: React.FC = () => {
             onChangeText={handlePasswordChange}
             secureTextEntry
           />
+          {passwordError ? (
+            <Text style={styles.errorText}>{passwordError}</Text>
+          ) : null}
+        </View> */}
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Password</Text>
+          <View style={styles.passwordInputContainer}>
+            <TextInput
+              style={styles.passwordInput}
+              value={password}
+              onChangeText={handlePasswordChange}
+              secureTextEntry={!showPassword}
+            />
+            <TouchableOpacity
+              style={styles.showPasswordButton}
+              onPress={toggleShowPassword}>
+              <Text style={styles.showPasswordButtonText}>
+                {showPassword ? 'Hide' : 'Show'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+          {passwordError ? (
+            <Text style={styles.errorText}>{passwordError}</Text>
+          ) : null}
         </View>
+        {loading ? (
+          <ActivityIndicator size="large" color={Colors.brand} />
+        ) : null}
         <TouchableOpacity
           style={{alignSelf: 'flex-start', marginLeft: 20}}
           onPress={handleForgotPasswordPress}>
           <Text style={styles.forgotPasswordText}>Forgot your password?</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.loginButton} onPress={handleLoginPress}>
-          {/* <TouchableOpacity style={styles.loginButton} onPress={handleLoginPress}> */}
           <Text style={styles.loginText}>Login</Text>
         </TouchableOpacity>
-        <Text style={styles.orText}>Or continue with</Text>
+        <Text style={styles.orText}>or continue with</Text>
         <View style={styles.buttonRow}>
           <TouchableOpacity
             style={styles.roundedButton}
@@ -151,17 +242,13 @@ const Login: React.FC = () => {
         <Text style={styles.termsText}>
           By continuing, you agree to our Terms of Service and Privacy Policy
         </Text>
-        <View
-          style={{
-            width: '60%',
-            height: 3,
-            backgroundColor: Colors.primary,
-            marginTop: 25,
-          }}
-        />
-        <Text style={[styles.termsText, {fontSize: 18}]}>
-          Not have an account yet? join us
-        </Text>
+        <View style={styles.horizontalLine} />
+        <View style={{flexDirection: 'row'}}>
+          <Text style={styles.createAccount}>Not have an account yet?</Text>
+          <TouchableOpacity style={{}}>
+            <Text style={styles.joinUsText}>Join Us</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </ScrollView>
   );
@@ -175,8 +262,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
   },
   logoContainer: {
-    marginTop: 100,
-    marginBottom: 32,
+    marginTop: 45,
+    marginBottom: 24,
   },
   logo: {
     width: 150,
@@ -185,20 +272,24 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     width: '90%',
-    marginBottom: 16,
+    marginBottom: 8,
   },
   label: {
-    marginBottom: 8,
+    marginBottom: 4,
     fontSize: 16,
-    // fontWeight: 'bold',
     color: '#aaa',
   },
   input: {
-    height: 40,
+    height: 42,
     borderColor: 'gray',
     borderWidth: 1,
     paddingHorizontal: 8,
     color: Colors.primary,
+  },
+  errorText: {
+    fontSize: 12,
+    color: 'red',
+    marginTop: 4,
   },
   forgotPasswordText: {
     textAlign: 'left',
@@ -206,27 +297,54 @@ const styles = StyleSheet.create({
     color: Colors.primary,
     fontSize: 12,
   },
+  passwordInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderColor: 'gray',
+    borderWidth: 1,
+    paddingHorizontal: 8,
+  },
+  passwordInput: {
+    flex: 1,
+    height: 42,
+    color: Colors.primary,
+  },
+  showPasswordButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    // backgroundColor: Colors.loginPageLable,
+    borderRadius: 4,
+    marginLeft: 8,
+  },
+  showPasswordButtonText: {
+    color: Colors.brand,
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
   loginButton: {
     width: '90%',
-    height: 50,
+    height: 45,
     backgroundColor: Colors.brand,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 20,
-    marginTop: 16,
+    marginTop: 18,
   },
   loginText: {
     textAlign: 'center',
     color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 18,
+    textTransform: 'uppercase',
   },
   orText: {
-    marginTop: 16,
-    fontSize: 16,
+    marginTop: 20,
     color: Colors.primary,
+    fontSize: 14,
   },
   buttonRow: {
     flexDirection: 'row',
-    marginTop: 16,
+    marginTop: 20,
     justifyContent: 'center',
     paddingLeft: 5,
   },
@@ -239,10 +357,28 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   termsText: {
-    marginTop: 16,
     fontSize: 12,
     textAlign: 'center',
     color: Colors.primary,
+    marginTop: 25,
+  },
+  horizontalLine: {
+    width: '85%',
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: Colors.primary,
+    marginTop: 25,
+  },
+  createAccount: {
+    fontSize: 16,
+    textAlign: 'center',
+    color: Colors.primary,
+    marginTop: 25,
+  },
+  joinUsText: {
+    color: Colors.brand,
+    fontSize: 16,
+    marginLeft: 5,
+    marginTop: 25,
   },
 });
 

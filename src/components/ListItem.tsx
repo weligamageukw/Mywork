@@ -3,15 +3,15 @@ import React from 'react';
 import {Pressable} from 'react-native';
 import ListItemContent from './ListItemContent';
 
-import {cocktailProps} from '../types/types';
+import {SongProps} from '../types/types';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {HomeStackParamList} from '../navigation/MainNavigation';
 
-type CocktailListItemProps = {
-  cocktail: cocktailProps;
+type ListItemProps = {
+  song: SongProps;
 };
 
-const ListItem = ({cocktail}: CocktailListItemProps) => {
+const ListItem = ({song}: ListItemProps) => {
   const navigation =
     useNavigation<NativeStackNavigationProp<HomeStackParamList>>();
 
@@ -19,9 +19,11 @@ const ListItem = ({cocktail}: CocktailListItemProps) => {
     <Pressable
       testID="list-item"
       onPress={() => {
-        navigation.navigate('CocktailDetailsScreen', {cocktail});
+        // console.log('Pressable', song);
+
+        navigation.navigate('SongDetailScreen', {song});
       }}>
-      <ListItemContent cocktail={cocktail} />
+      <ListItemContent song={song} />
     </Pressable>
   );
 };

@@ -1,17 +1,15 @@
 import {createSlice} from '@reduxjs/toolkit';
 
-const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'm', 'i', 'l', 't'];
-
 export const SignInSlice = createSlice({
-  name: 'favouriteCocktails',
+  name: 'signin',
   initialState: {
-    letter: 'q',
+    // letter: 'q',
     authrized: false,
   },
   reducers: {
     signIn: (state, action) => {
-      state.authrized = action.payload;
-      console.log('signIn--', state.authrized);
+      // state.authrized = action.payload;
+      // console.log('signIn--', state.authrized);
     },
     // signOut: (state, action) => {
     //   state.authrized = false;

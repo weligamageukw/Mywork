@@ -3,6 +3,12 @@ export interface SongProps {
     collectionName: string;
     trackName: string;
     artworkUrl100: string;
-    trackId: number
+    trackId: number,
+    trackPrice: number,
+    country: string,
+    primaryGenreName: string,
+    previewUrl: string,
+    releaseDate: string,
+    trackCensoredName: string,
   }
   

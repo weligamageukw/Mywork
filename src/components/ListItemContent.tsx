@@ -1,57 +1,49 @@
 import React, {useLayoutEffect} from 'react';
-import {StyleSheet, View, Image, Text} from 'react-native';
+import {StyleSheet, View, Image, Text, TouchableOpacity} from 'react-native';
 
-import ListItemActions from './ListItemActions';
-import {cocktailProps} from '../types/types';
+import {SongProps} from '../types/types';
+import {Colors} from '../styles/colors';
 
-type ListItemContentProps = {
-  cocktail: cocktailProps;
+//@ts-ignore
+import Ionicons from 'react-native-vector-icons/Ionicons';
+
+type SongDetailScreenProps = {
+  song: SongProps;
 };
 
-const ListItemContent = ({cocktail}: ListItemContentProps) => {
-  useLayoutEffect(() => {
-    let tempElement;
-    if (cocktail.isFavourite) {
-      tempElement = {
-        ...cocktail,
-        isFavourite: true,
-      };
-    } else {
-      tempElement = {
-        ...cocktail,
-        isFavourite: false,
-      };
-    }
-  }, []);
+const ListItemContent = ({song}: SongDetailScreenProps) => {
+  useLayoutEffect(() => {}, []);
   return (
     <View style={styles.singleItem}>
       <View style={styles.row}>
-        <Image
-          style={styles.cockTailThumb}
-          source={{uri: cocktail.strDrinkThumb}}
-        />
-        <View style={styles.cocktailContentContainer}>
+        <Image style={styles.songThumb} source={{uri: song.artworkUrl100}} />
+        <View style={styles.songContentContainer}>
           <View style={styles.rowTop}>
             <Text numberOfLines={1} style={[styles.header]}>
-              {cocktail.strDrink}
+              {song.trackName}
             </Text>
+            {/* <ListItemActions comments={'5'} likes={'10'} cocktail={song} /> */}
+            <TouchableOpacity
+              onPress={e => {
+                e.stopPropagation();
+                // Alert.alert('View Comments');
+              }}
+              style={styles.iconStyle}>
+              <Ionicons
+                // style={styles.actionButton}
+                name="ellipsis-horizontal-sharp"
+                size={15}
+                color={Colors.primary}
+              />
+            </TouchableOpacity>
+          </View>
+          <View style={{flex: 1, flexDirection: 'row'}}>
+            <Text style={[styles.description]}>{song.artistName}</Text>
             <Text style={styles.gray} numberOfLines={1}>
               {' '}
-              ~ {cocktail.strCategory}
+              ~ {song.collectionName}
             </Text>
-          </View>
-          <View style={{flex: 1, justifyContent: 'space-between'}}>
-            <Text numberOfLines={3} style={[styles.description]}>
-              {cocktail.strInstructions}
-            </Text>
-            <View style={styles.rowActions}>
-              <ListItemActions
-                comments={'5'}
-                likes={'10'}
-                // isSelected={cocktail.isFavourite ? true : false}
-                cocktail={cocktail}
-              />
-            </View>
+            <View style={styles.rowActions}></View>
           </View>
         </View>
       </View>
@@ -62,13 +54,13 @@ const ListItemContent = ({cocktail}: ListItemContentProps) => {
 const styles = StyleSheet.create({
   gray: {
     color: '#bbb',
-    fontSize: 13,
+    fontSize: 12,
     paddingRight: 2,
   },
-  cockTailThumb: {
-    height: 100,
-    width: 100,
-    borderRadius: 10,
+  songThumb: {
+    height: 60,
+    width: 60,
+    borderRadius: 8,
     marginRight: 12,
     marginTop: 4,
   },
@@ -80,17 +72,18 @@ const styles = StyleSheet.create({
     color: '#eee',
   },
   description: {
-    fontSize: 14,
+    fontSize: 12,
     color: '#eee',
   },
   singleItem: {
-    paddingHorizontal: 12,
+    paddingHorizontal: 5,
     minHeight: 80,
     flex: 1,
-    paddingVertical: 16,
+    paddingVertical: 10,
   },
   rowTop: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   rowActions: {
     flexGrow: 1,
@@ -101,9 +94,13 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
   },
-  cocktailContentContainer: {
+  songContentContainer: {
+    paddingTop: 5,
     flexGrow: 1,
     flexShrink: 1,
+  },
+  iconStyle: {
+    // alignSelf: 'flex-end'
   },
 });
 
